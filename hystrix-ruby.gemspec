@@ -7,6 +7,7 @@ Gem::Specification.new do |s|
 	s.email = %q{keith.thornhill@gmail.com}
 	s.files = Dir['lib/**/*.rb']
 	s.require_paths = ["lib"]
+	s.summary = %q{Hystrix for Ruby}
 
 	s.add_dependency 'celluloid', '~> 0.13.0'
 	s.add_development_dependency 'rspec'
