@@ -11,9 +11,9 @@ module Hystrix
 			self.pools = {}
 		end
 
-		def get_pool(pool_name)
+		def get_pool(pool_name, size = nil)
 			lock.synchronize do
-				pools[pool_name] ||= CommandExecutorPool.new(pool_name, 10)
+				pools[pool_name] ||= CommandExecutorPool.new(pool_name, size || 10)
 			end
 		end
 	end

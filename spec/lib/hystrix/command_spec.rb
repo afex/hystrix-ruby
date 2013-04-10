@@ -26,6 +26,15 @@ describe Hystrix::Command do
 		end
 	end
 
+	it 'allows commands to define their pool size' do
+		class SizedPoolCommand < Hystrix::Command
+			pool_size 3
+		end
+
+		cmd = SizedPoolCommand.new
+		cmd.executor_pool.size.should == 3
+	end
+
 	context '.execute' do
 		it 'supports sychronous execution' do
 			CommandHelloWorld.new('keith').execute.should == 'keith'

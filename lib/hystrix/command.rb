@@ -1,13 +1,19 @@
+# TODO: implement pluggable metrics collection. implement separate statsd impl
+
 module Hystrix
 	class ExecutorPoolFullError < StandardError; end
 
 	class Command
 		include Celluloid
 
+		@default_pool_size = 10
+		def self.default_pool_size
+			@default_pool_size
+		end
 		attr_accessor :executor_pool
 
 		def initialize(*args)
-			self.executor_pool = CommandExecutorPools.instance.get_pool(executor_pool_name)
+			self.executor_pool = CommandExecutorPools.instance.get_pool(executor_pool_name, self.class.default_pool_size)
 		end
 
 		def execute
@@ -39,6 +45,10 @@ module Hystrix
 
 		def fallback
 			raise NotImplementedError
+		end
+
+		def self.pool_size(size)
+			@default_pool_size = size
 		end
 	end
 end
