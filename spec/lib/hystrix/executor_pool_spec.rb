@@ -38,5 +38,37 @@ describe Hystrix::CommandExecutorPool do
 			executor.unlock
 			pool.take.object_id.should == executor.object_id
 		end
+
+		it 'fails if there are no executors configured' do
+			pool = Hystrix::CommandExecutorPool.new('test', 0)
+			expect { pool.take }.to raise_error
+
+		end
+	end
+
+	context '.shutdown' do
+		it 'shuts down all registered pools' do
+			pool = Hystrix::CommandExecutorPool.new('test', 10)
+			pool.shutdown
+			pool.executors.size.should == 0
+		end
+
+		it 'lets commands finish when shutting down' do
+			class SleepCommand < Hystrix::Command
+				def run
+					sleep 1
+					return 'my value'
+				end
+			end
+			pool = Hystrix::CommandExecutorPool.new('test', 10)
+			command = SleepCommand.new
+			command.executor_pool = pool
+			future = command.queue
+
+			pool.shutdown
+
+			pool.executors.size.should == 0
+			future.value.should == 'my value'
+		end
 	end
 end

@@ -16,6 +16,14 @@ module Hystrix
 				pools[pool_name] ||= CommandExecutorPool.new(pool_name, size || 10)
 			end
 		end
+
+		def shutdown
+			lock.synchronize do
+				for pool_name, pool in pools
+					pool.shutdown
+				end
+			end
+		end
 	end
 
 	class CommandExecutorPool
@@ -33,7 +41,7 @@ module Hystrix
 		end
 
 		def take
-			self.lock.synchronize do
+			lock.synchronize do
 				for executor in self.executors
 					unless executor.locked?
 						executor.lock
@@ -43,6 +51,20 @@ module Hystrix
 			end
 
 			raise ExecutorPoolFullError.new("Unable to get executor from #{self.name} pool.")
+		end
+
+		def shutdown
+			lock.synchronize do
+				until executors.size == 0 do
+					for i in (0...executors.size)
+						unless executors[i].locked?
+							executors[i] = nil
+						end
+					end
+					executors.compact!
+					sleep 0.1
+				end
+			end
 		end
 	end
 

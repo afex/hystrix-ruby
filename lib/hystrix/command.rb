@@ -16,6 +16,7 @@ module Hystrix
 			self.executor_pool = CommandExecutorPools.instance.get_pool(executor_pool_name, self.class.default_pool_size)
 		end
 
+		# Run the command synchronously
 		def execute
 			executor = nil
 			begin
@@ -35,10 +36,12 @@ module Hystrix
 			return result
 		end
 
+		# Commands which share the value of executor_pool_name will use the same pool
 		def executor_pool_name
 			self.class.name
 		end
 
+		# Run the command asynchronously
 		def queue
 			future.execute
 		end
