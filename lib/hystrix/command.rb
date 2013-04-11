@@ -24,7 +24,11 @@ module Hystrix
 				result = executor.run(self)
 			rescue Exception => main_error
 				begin
-					result = fallback
+					if main_error.respond_to?(:cause)
+						result = fallback(main_error.cause)
+					else
+						result = fallback(main_error)
+					end
 				rescue NotImplementedError => fallback_error
 					raise main_error
 				end
@@ -46,7 +50,7 @@ module Hystrix
 			future.execute
 		end
 
-		def fallback
+		def fallback(error)
 			raise NotImplementedError
 		end
 

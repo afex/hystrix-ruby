@@ -21,7 +21,7 @@ describe Hystrix::Command do
 			end
 		end
 
-		def fallback
+		def fallback(error)
 			return 'it failed'
 		end
 	end
@@ -42,6 +42,14 @@ describe Hystrix::Command do
 
 		it 'returns fallback value on error' do
 			CommandHelloWorld.new('keith', 0, true).execute.should == 'it failed'
+		end
+
+		it 'sends exception to fallback method on error' do
+			c = CommandHelloWorld.new('keith', 0, true)
+			c.wrapped_object.should_receive(:fallback).with do |error|
+				error.message.should == 'error'
+			end
+			c.execute
 		end
 	end	
 
