@@ -18,6 +18,8 @@ module Hystrix
 
 		# Run the command synchronously
 		def execute
+			raise 'No executor pool found! Did you forget to call super in your initialize method?' unless executor_pool
+
 			executor = nil
 			begin
 				executor = executor_pool.take

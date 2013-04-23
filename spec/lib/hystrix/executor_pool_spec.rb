@@ -42,7 +42,6 @@ describe Hystrix::CommandExecutorPool do
 		it 'fails if there are no executors configured' do
 			pool = Hystrix::CommandExecutorPool.new('test', 0)
 			expect { pool.take }.to raise_error
-
 		end
 	end
 

@@ -92,4 +92,15 @@ describe Hystrix::Command do
 		c2.execute.should == 'it failed'
 		future.value.should == 'foo'
 	end
+
+	it 'throws an error if a command class does not run the base initialize method' do
+		class Cmd < Hystrix::Command
+			def initialize; end
+			def run; end
+		end
+
+		expect {
+			Cmd.new.execute
+		}.to raise_error
+	end
 end
