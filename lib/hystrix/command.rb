@@ -23,7 +23,11 @@ module Hystrix
 			executor = nil
 			begin
 				executor = executor_pool.take
+				start_time = Time.now
 				result = executor.run(self)
+				duration = Time.now - start_time
+
+				Configuration.notify_success(self.class.name, duration)
 			rescue Exception => main_error
 				begin
 					if main_error.respond_to?(:cause)

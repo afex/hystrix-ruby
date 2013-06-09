@@ -26,6 +26,41 @@ describe Hystrix::Command do
 		end
 	end
 
+	context 'notifies callbacks,' do
+		before do
+			
+		end
+
+		after do
+			Hystrix::Configuration.reset
+		end
+
+		it 'on success' do
+			test_name = nil
+			test_duration = nil
+
+			Hystrix.configure do
+				on_success do |command_name, duration|
+					test_name = command_name
+					test_duration = duration
+				end
+			end
+
+			CommandHelloWorld.new('keith').execute
+
+			test_name.should == 'CommandHelloWorld'
+			test_duration.should > 0
+		end
+
+		it 'on fallback' do
+			pending 'todo'
+		end
+
+		it 'on failure' do
+			pending 'todo'
+		end
+	end
+
 	it 'allows commands to define their pool size' do
 		class SizedPoolCommand < Hystrix::Command
 			pool_size 3
