@@ -12,9 +12,19 @@ module Hystrix
 		def self.on_fallback(&block)
 			@on_fallback = block
 		end
+		def self.notify_fallback(command_name, duration, error)
+			if @on_fallback
+				@on_fallback.call(command_name, duration, error)
+			end
+		end
 
 		def self.on_failure(&block)
 			@on_failure = block
+		end
+		def self.notify_failure(command_name, duration, error)
+			if @on_failure
+				@on_failure.call(command_name, duration, error)
+			end
 		end
 
 		def self.reset

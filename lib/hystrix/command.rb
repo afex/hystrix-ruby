@@ -21,21 +21,27 @@ module Hystrix
 			raise 'No executor pool found! Did you forget to call super in your initialize method?' unless executor_pool
 
 			executor = nil
+			start_time = Time.now
 			begin
 				executor = executor_pool.take
-				start_time = Time.now
+				
 				result = executor.run(self)
 				duration = Time.now - start_time
 
 				Configuration.notify_success(self.class.name, duration)
 			rescue Exception => main_error
+				duration = Time.now - start_time
+
 				begin
 					if main_error.respond_to?(:cause)
 						result = fallback(main_error.cause)
+						Configuration.notify_fallback(self.class.name, duration, main_error.cause)
 					else
 						result = fallback(main_error)
+						Configuration.notify_fallback(self.class.name, duration, main_error)
 					end
 				rescue NotImplementedError => fallback_error
+					Configuration.notify_failure(self.class.name, duration, main_error)
 					raise main_error
 				end
 			ensure

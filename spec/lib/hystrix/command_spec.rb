@@ -53,11 +53,52 @@ describe Hystrix::Command do
 		end
 
 		it 'on fallback' do
-			pending 'todo'
+			test_name = nil
+			test_duration = nil
+			test_error = nil
+
+			Hystrix.configure do
+				on_fallback do |command_name, duration, error|
+					test_name = command_name
+					test_duration = duration
+					test_error = error
+				end
+			end
+
+			CommandHelloWorld.new('keith', 0, true).execute
+
+			test_name.should == 'CommandHelloWorld'
+			test_duration.should > 0
+			test_error.message.should == 'error'
 		end
 
 		it 'on failure' do
-			pending 'todo'
+			test_name = nil
+			test_duration = nil
+			test_error = nil
+
+			class NoFallbackCommand < Hystrix::Command
+				def run
+					raise 'fail'
+				end
+			end
+
+			Hystrix.configure do
+				on_failure do |command_name, duration, error|
+					test_name = command_name
+					test_duration = duration
+					test_error = error
+				end
+			end
+
+			expect {
+				NoFallbackCommand.new.execute
+			}.to raise_error
+			
+
+			test_name.should == "NoFallbackCommand"
+			test_duration.should > 0
+			test_error.message.should == 'fail'
 		end
 	end
 
