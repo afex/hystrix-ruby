@@ -2,18 +2,21 @@
 
 module Hystrix
 	class ExecutorPoolFullError < StandardError; end
+	class CircuitClosedError < StandardError; end
 
 	class Command
 		include Celluloid
+
+		attr_accessor :executor_pool, :circuit
 
 		@default_pool_size = 10
 		def self.default_pool_size
 			@default_pool_size
 		end
-		attr_accessor :executor_pool
 
 		def initialize(*args)
 			self.executor_pool = CommandExecutorPools.instance.get_pool(executor_pool_name, self.class.default_pool_size)
+			self.circuit = self.executor_pool.circuit_supervisor.actors.first
 		end
 
 		# Run the command synchronously
@@ -22,7 +25,10 @@ module Hystrix
 
 			executor = nil
 			start_time = Time.now
+
 			begin
+				raise CircuitClosedError unless self.circuit.is_closed?
+
 				executor = executor_pool.take
 				
 				result = executor.run(self)

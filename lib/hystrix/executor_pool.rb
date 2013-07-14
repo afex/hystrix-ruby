@@ -29,12 +29,14 @@ module Hystrix
 	class CommandExecutorPool
 		attr_accessor :name, :size
 		attr_accessor :executors, :lock
+		attr_accessor :circuit_supervisor
 
 		def initialize(name, size)
 			self.name = name
 			self.size = size
 			self.executors = []
 			self.lock = Mutex.new
+			self.circuit_supervisor = Circuit.supervise
 			size.times do
 				self.executors << CommandExecutor.new
 			end

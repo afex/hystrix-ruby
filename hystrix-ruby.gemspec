@@ -12,4 +12,5 @@ Gem::Specification.new do |s|
 	s.add_dependency 'celluloid', '>= 0.13.0'
 	s.add_development_dependency 'rspec'
 	s.add_development_dependency 'simplecov-rcov'
+	s.add_development_dependency 'timecop'
 end

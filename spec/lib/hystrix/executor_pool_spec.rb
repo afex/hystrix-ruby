@@ -64,6 +64,8 @@ describe Hystrix::CommandExecutorPool do
 			command.executor_pool = pool
 			future = command.queue
 
+			sleep 0.1
+			
 			pool.shutdown
 
 			pool.executors.size.should == 0

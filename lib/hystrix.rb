@@ -2,6 +2,7 @@ require 'celluloid'
 
 require 'hystrix/command'
 require 'hystrix/configuration'
+require 'hystrix/circuit'
 require 'hystrix/dsl'
 require 'hystrix/executor_pool'
 

@@ -26,6 +26,38 @@ describe Hystrix::Command do
 		end
 	end
 
+	context 'with a circuit, ' do
+		before do
+			@cmd = CommandHelloWorld.new 'circuit string'
+			@circuit_mock = double('Hystrix::Circuit')
+			@cmd.wrapped_object.stub(:circuit).and_return(@circuit_mock)
+		end
+
+		context 'when the circuit is closed, ' do
+			before do
+				@circuit_mock.stub(:is_closed?).and_return(true)
+			end
+
+			it 'allows commands to succeed' do
+				@cmd.execute.should == 'circuit string'
+			end
+		end
+
+		context 'when the circuit is open, ' do
+			before do
+				@circuit_mock.stub(:is_closed?).and_return(false)
+			end
+
+			it 'triggers fallback responses' do
+				@cmd.execute.should == 'it failed'
+			end
+
+			it 'does not attempt to run the command' do
+				@cmd.wrapped_object.should_not_receive(:run)
+			end
+		end
+	end
+
 	context 'notifies callbacks,' do
 		before do
 			

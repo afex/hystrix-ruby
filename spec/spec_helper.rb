@@ -1,3 +1,5 @@
+require 'timecop'
+
 require 'rspec'
 require 'simplecov'
 require 'simplecov-rcov'

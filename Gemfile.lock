@@ -56,6 +56,7 @@ GEM
     thrift (0.8.0)
     thrift_client (0.8.4)
       thrift (~> 0.8.0)
+    timecop (0.6.1)
     timers (1.1.0)
 
 PLATFORMS
@@ -66,3 +67,4 @@ DEPENDENCIES
   hystrix-ruby!
   rspec
   simplecov-rcov
+  timecop
