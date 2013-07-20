@@ -5,6 +5,7 @@ require 'hystrix/configuration'
 require 'hystrix/circuit'
 require 'hystrix/dsl'
 require 'hystrix/executor_pool'
+require 'hystrix/inline'
 
 module Hystrix
 	extend DSL

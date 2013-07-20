@@ -34,20 +34,20 @@ module Hystrix
 				result = executor.run(self)
 				duration = Time.now - start_time
 
-				Configuration.notify_success(self.class.name, duration)
+				Configuration.notify_success(executor_pool_name, duration)
 			rescue Exception => main_error
 				duration = Time.now - start_time
 
 				begin
 					if main_error.respond_to?(:cause)
 						result = fallback(main_error.cause)
-						Configuration.notify_fallback(self.class.name, duration, main_error.cause)
+						Configuration.notify_fallback(executor_pool_name, duration, main_error.cause)
 					else
 						result = fallback(main_error)
-						Configuration.notify_fallback(self.class.name, duration, main_error)
+						Configuration.notify_fallback(executor_pool_name, duration, main_error)
 					end
 				rescue NotImplementedError => fallback_error
-					Configuration.notify_failure(self.class.name, duration, main_error)
+					Configuration.notify_failure(executor_pool_name, duration, main_error)
 					raise main_error
 				end
 			ensure
@@ -60,7 +60,7 @@ module Hystrix
 
 		# Commands which share the value of executor_pool_name will use the same pool
 		def executor_pool_name
-			self.class.name
+			@executor_pool_name || self.class.name
 		end
 
 		# Run the command asynchronously
