@@ -5,4 +5,4 @@ gemspec
 gem 'rake'
 
 # TODO: remove the need for this dependency
-gem 'firefall', :path => 'vendor/red5/firefall'
+gem 'firefall'

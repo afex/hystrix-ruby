@@ -4,17 +4,6 @@ PATH
     hystrix-ruby (0.0.1)
       celluloid (>= 0.13.0)
 
-PATH
-  remote: vendor/red5/firefall
-  specs:
-    firefall (1.0.0)
-      gelf
-      json (>= 1.6.8)
-      memcached (~> 1.7.0)
-      rest-client
-      ruby-prof
-      statsd-ruby
-
 GEM
   remote: https://rubygems.org/
   remote: http://s-us-linbuild-1:9999/
@@ -22,6 +11,13 @@ GEM
     celluloid (0.14.0)
       timers (>= 1.0.0)
     diff-lcs (1.2.2)
+    firefall (1.0.0)
+      gelf
+      json (>= 1.6.8)
+      memcached (~> 1.7.0)
+      rest-client
+      ruby-prof
+      statsd-ruby
     gelf (1.4.0)
       json
     json (1.8.0)
@@ -54,7 +50,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  firefall!
+  firefall
   hystrix-ruby!
   rake
   rspec
