@@ -1,0 +1,4 @@
+hystrix-ruby
+============
+
+Hystrix for Ruby. Currently offers only basic sync/async command execution and fallbacks
